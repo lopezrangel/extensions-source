@@ -1,35 +1,36 @@
 name: Build MangaVault
 
 on:
-  workflow_dispatch:
+workflow_dispatch:
 
 permissions:
-  contents: read
+contents: read
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+build:
+runs-on: ubuntu-latest
+timeout-minutes: 30
 
-    steps:
-      - name: Descargar el repositorio
-        uses: actions/checkout@v4
 
-      - name: Instalar Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '25'
+steps:
+  - name: Descargar el repositorio
+    uses: actions/checkout@v4
 
-      - name: Configurar Gradle
-        uses: gradle/actions/setup-gradle@v4
+  - name: Instalar Java
+    uses: actions/setup-java@v4
+    with:
+      distribution: temurin
+      java-version: '25'
 
-      - name: Compilar MangaVault
-        run: ./gradlew :src:es:mangavault:assembleRelease
+  - name: Configurar Gradle
+    uses: gradle/actions/setup-gradle@v4
 
-      - name: Guardar el APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: MangaVault
-          path: src/es/mangavault/build/outputs/apk/release/*.apk
-          if-no-files-found: error
+  - name: Compilar MangaVault
+    run: ./gradlew --no-daemon --max-workers=1 :src:es:mangavault:assembleRelease
+
+  - name: Guardar el APK
+    uses: actions/upload-artifact@v4
+    with:
+      name: MangaVault
+      path: src/es/mangavault/build/outputs/apk/release/*.apk
+      if-no-files-found: error
